@@ -77,12 +77,12 @@ export default function Home() {
     <main className="min-h-screen bg-gray-50 text-gray-800 p-4 sm:p-6 lg:p-8">
       <div className="container mx-auto">
         <div className="text-center mb-10">
-          <h1 className="text-4xl font-bold">JuroSmart</h1>
-          <p className="text-lg text-gray-600">Sua calculadora inteligente de juros compostos.</p>
+          <h1 className="text-4xl font-bold text-indigo-600">JuroSmart</h1>
+          <p className="text-lg text-gray-600 mt-2">Sua calculadora inteligente de juros compostos.</p>
         </div>
         <div className="max-w-4xl mx-auto space-y-8">
-          <div className="bg-white p-8 rounded-2xl shadow-lg">
-            <h2 className="text-2xl font-bold mb-6">Simule seu Investimento</h2>
+          <div className="bg-white p-8 rounded-2xl shadow-lg transition-shadow duration-300 hover:shadow-xl">
+            <h2 className="text-2xl font-bold mb-6 text-gray-900">Simule seu Investimento</h2>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label htmlFor="valorInicial" className="block text-sm font-medium text-gray-700">Valor Inicial (R$)</label>
@@ -92,7 +92,7 @@ export default function Home() {
                   id="valorInicial"
                   value={valorInicial}
                   onChange={(e) => setValorInicial(maskCurrency(e.target.value))}
-                  className={`mt-1 block w-full px-4 py-2 bg-gray-50 border rounded-md shadow-sm focus:outline-none sm:text-sm text-black ${errors.valorInicial ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-indigo-500 focus:border-indigo-500'}`}
+                  className={`mt-1 block w-full px-4 py-2 bg-gray-50 border rounded-md shadow-sm focus:outline-none sm:text-sm text-gray-900 transition-colors duration-300 ${errors.valorInicial ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-indigo-500 focus:border-indigo-500'}`}
                   placeholder="0,00"
                   required
                 />
@@ -106,7 +106,7 @@ export default function Home() {
                   id="aporteMensal"
                   value={aporteMensal}
                   onChange={(e) => setAporteMensal(maskCurrency(e.target.value))}
-                  className={`mt-1 block w-full px-4 py-2 bg-gray-50 border rounded-md shadow-sm focus:outline-none sm:text-sm text-black ${errors.aporteMensal ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-indigo-500 focus:border-indigo-500'}`}
+                  className={`mt-1 block w-full px-4 py-2 bg-gray-50 border rounded-md shadow-sm focus:outline-none sm:text-sm text-gray-900 transition-colors duration-300 ${errors.aporteMensal ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-indigo-500 focus:border-indigo-500'}`}
                   placeholder="0,00"
                   required
                 />
@@ -121,11 +121,11 @@ export default function Home() {
                     id="taxaJuros"
                     value={taxaJuros}
                     onChange={(e) => setTaxaJuros(e.target.value)}
-                    className={`mt-1 block w-full px-4 py-2 bg-gray-50 border rounded-l-md shadow-sm focus:outline-none sm:text-sm text-black ${errors.taxaJuros ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-indigo-500 focus:border-indigo-500'}`}
+                    className={`mt-1 block w-full px-4 py-2 bg-gray-50 border rounded-l-md shadow-sm focus:outline-none sm:text-sm text-gray-900 transition-colors duration-300 ${errors.taxaJuros ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-indigo-500 focus:border-indigo-500'}`}
                     placeholder="0,0"
                     required
                   />
-                  <select value={tipoTaxa} onChange={(e) => setTipoTaxa(e.target.value)} className="mt-1 block w-auto pl-3 pr-8 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-r-md text-black bg-gray-50">
+                  <select value={tipoTaxa} onChange={(e) => setTipoTaxa(e.target.value)} className="custom-select mt-1 block w-auto pl-3 pr-8 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-r-md text-gray-900 bg-gray-50 transition-colors duration-300">
                     <option value="mensal">Mensal</option>
                     <option value="anual">Anual</option>
                   </select>
@@ -140,11 +140,11 @@ export default function Home() {
                     id="tempo"
                     value={tempo}
                     onChange={(e) => setTempo(e.target.value.replace(/\D/g, ''))}
-                    className={`mt-1 block w-full px-4 py-2 bg-gray-50 border rounded-l-md shadow-sm focus:outline-none sm:text-sm text-black ${errors.tempo ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-indigo-500 focus:border-indigo-500'}`}
+                    className={`mt-1 block w-full px-4 py-2 bg-gray-50 border rounded-l-md shadow-sm focus:outline-none sm:text-sm text-gray-900 transition-colors duration-300 ${errors.tempo ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-indigo-500 focus:border-indigo-500'}`}
                     placeholder="0"
                     required
                   />
-                  <select value={tipoTempo} onChange={(e) => setTipoTempo(e.target.value)} className="mt-1 block w-auto pl-3 pr-8 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-r-md text-black bg-gray-50">
+                  <select value={tipoTempo} onChange={(e) => setTipoTempo(e.target.value)} className="custom-select mt-1 block w-auto pl-3 pr-8 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-r-md text-gray-900 bg-gray-50 transition-colors duration-300">
                     <option value="meses">Meses</option>
                     <option value="anos">Anos</option>
                   </select>
@@ -152,10 +152,10 @@ export default function Home() {
                 {errors.tempo && <p className="mt-1 text-xs text-red-600">{errors.tempo}</p>}
               </div>
               <div className="flex flex-col sm:flex-row gap-4 pt-2">
-                <button type="submit" className="w-full bg-indigo-600 text-white py-3 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 font-semibold">
+                <button type="submit" className="w-full bg-indigo-600 text-white py-3 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 font-semibold transition-transform transform hover:scale-105">
                   Calcular
                 </button>
-                <button type="button" onClick={handleReset} className="w-full bg-gray-200 text-gray-700 py-3 px-4 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 font-semibold">
+                <button type="button" onClick={handleReset} className="w-full bg-gray-200 text-gray-700 py-3 px-4 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 font-semibold transition-transform transform hover:scale-105">
                   Limpar
                 </button>
               </div>
