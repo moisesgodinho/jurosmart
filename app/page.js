@@ -2,14 +2,15 @@
 
 import { useState } from 'react';
 import { calcularJurosCompostos } from '../lib/calculadora';
+import Resultado from '../components/Resultado';
 
 export default function Home() {
-  const [valorInicial, setValorInicial] = useState('');
-  const [aporteMensal, setAporteMensal] = useState('');
-  const [taxaJuros, setTaxaJuros] = useState('');
+  const [valorInicial, setValorInicial] = useState('1000');
+  const [aporteMensal, setAporteMensal] = useState('500');
+  const [taxaJuros, setTaxaJuros] = useState('1.2');
   const [tipoTaxa, setTipoTaxa] = useState('mensal');
-  const [tempo, setTempo] = useState('');
-  const [tipoTempo, setTipoTempo] = useState('meses');
+  const [tempo, setTempo] = useState('10');
+  const [tipoTempo, setTipoTempo] = useState('anos');
   const [resultado, setResultado] = useState(null);
 
   const handleSubmit = (e) => {
@@ -21,96 +22,99 @@ export default function Home() {
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold text-center mb-6">Calculadora de Juros Compostos</h1>
-
-      <div className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label htmlFor="valorInicial" className="block text-sm font-medium text-gray-700">Valor Inicial (R$)</label>
-            <input
-              type="number"
-              id="valorInicial"
-              value={valorInicial}
-              onChange={(e) => setValorInicial(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-black"
-              required
-            />
-          </div>
-
-          <div className="mb-4">
-            <label htmlFor="aporteMensal" className="block text-sm font-medium text-gray-700">Aporte Mensal (R$)</label>
-            <input
-              type="number"
-              id="aporteMensal"
-              value={aporteMensal}
-              onChange={(e) => setAporteMensal(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-black"
-              required
-            />
-          </div>
-
-          <div className="mb-4">
-            <label htmlFor="taxaJuros" className="block text-sm font-medium text-gray-700">Taxa de Juros (%)</label>
-            <div className="flex">
-              <input
-                type="number"
-                id="taxaJuros"
-                step="0.01"
-                value={taxaJuros}
-                onChange={(e) => setTaxaJuros(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-l-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-black"
-                required
-              />
-              <select
-                value={tipoTaxa}
-                onChange={(e) => setTipoTaxa(e.target.value)}
-                className="mt-1 block w-auto pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-r-md text-black"
-              >
-                <option value="mensal">Mensal</option>
-                <option value="anual">Anual</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="mb-6">
-            <label htmlFor="tempo" className="block text-sm font-medium text-gray-700">Período</label>
-            <div className="flex">
-              <input
-                type="number"
-                id="tempo"
-                value={tempo}
-                onChange={(e) => setTempo(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-l-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-black"
-                required
-              />
-              <select
-                value={tipoTempo}
-                onChange={(e) => setTipoTempo(e.target.value)}
-                className="mt-1 block w-auto pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-r-md text-black"
-              >
-                <option value="meses">Meses</option>
-                <option value="anos">Anos</option>
-              </select>
-            </div>
-          </div>
-
-          <button type="submit" className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-            Calcular
-          </button>
-        </form>
-      </div>
-
-      {resultado && (
-        <div className="mt-8 max-w-xl mx-auto bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-2xl font-bold mb-4 text-gray-800">Resultado</h2>
-          <div className="space-y-2 text-gray-700">
-            <p><strong>Montante Final:</strong> R$ {resultado.montanteFinal}</p>
-            <p><strong>Total em Juros:</strong> R$ {resultado.totalJuros}</p>
-            <p><strong>Total Investido:</strong> R$ {resultado.totalInvestido}</p>
-          </div>
+    <main className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8">
+      <div className="container mx-auto">
+        <div className="text-center mb-10">
+            <h1 className="text-4xl font-bold text-gray-800">JuroSmart</h1>
+            <p className="text-lg text-gray-600">Sua calculadora inteligente de juros compostos.</p>
         </div>
-      )}
-    </div>
+
+        {/* Container do Formulário */}
+        <div className="max-w-4xl mx-auto bg-white p-8 rounded-2xl shadow-lg">
+          <h2 className="text-2xl font-bold text-gray-800 mb-6">Simule seu Investimento</h2>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label htmlFor="valorInicial" className="block text-sm font-medium text-gray-700">Valor Inicial (R$)</label>
+              <input
+                type="number"
+                id="valorInicial"
+                value={valorInicial}
+                onChange={(e) => setValorInicial(e.target.value)}
+                className="mt-1 block w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-black"
+                required
+              />
+            </div>
+
+            <div>
+              <label htmlFor="aporteMensal" className="block text-sm font-medium text-gray-700">Aporte Mensal (R$)</label>
+              <input
+                type="number"
+                id="aporteMensal"
+                value={aporteMensal}
+                onChange={(e) => setAporteMensal(e.target.value)}
+                className="mt-1 block w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-black"
+                required
+              />
+            </div>
+
+            <div>
+              <label htmlFor="taxaJuros" className="block text-sm font-medium text-gray-700">Taxa de Juros (%)</label>
+              <div className="flex">
+                <input
+                  type="number"
+                  id="taxaJuros"
+                  step="0.01"
+                  value={taxaJuros}
+                  onChange={(e) => setTaxaJuros(e.target.value)}
+                  className="mt-1 block w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-l-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-black"
+                  required
+                />
+                <select
+                  value={tipoTaxa}
+                  onChange={(e) => setTipoTaxa(e.target.value)}
+                  className="mt-1 block w-auto pl-3 pr-8 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-r-md text-black bg-gray-50"
+                >
+                  <option value="mensal">Mensal</option>
+                  <option value="anual">Anual</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor="tempo" className="block text-sm font-medium text-gray-700">Período</label>
+              <div className="flex">
+                <input
+                  type="number"
+                  id="tempo"
+                  value={tempo}
+                  onChange={(e) => setTempo(e.target.value)}
+                  className="mt-1 block w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-l-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-black"
+                  required
+                />
+                <select
+                  value={tipoTempo}
+                  onChange={(e) => setTipoTempo(e.target.value)}
+                  className="mt-1 block w-auto pl-3 pr-8 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-r-md text-black bg-gray-50"
+                >
+                  <option value="meses">Meses</option>
+                  <option value="anos">Anos</option>
+                </select>
+              </div>
+            </div>
+
+            <button type="submit" className="w-full bg-indigo-600 text-white py-3 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 font-semibold">
+              Calcular
+            </button>
+          </form>
+        </div>
+
+        {/* Container dos Resultados */}
+        {resultado && (
+          <div className="max-w-4xl mx-auto mt-8">
+            <Resultado resultado={resultado} />
+          </div>
+        )}
+      </div>
+    </main>
   );
 }
