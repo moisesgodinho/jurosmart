@@ -23,7 +23,7 @@ export default function Home() {
   const [valorInicial, setValorInicial] = useState('');
   const [aporteMensal, setAporteMensal] = useState('');
   const [taxaJuros, setTaxaJuros] = useState('');
-  const [tipoTaxa, setTipoTaxa] = useState('mensal');
+  const [tipoTaxa, setTipoTaxa] = useState('anual');
   const [tempo, setTempo] = useState('');
   const [tipoTempo, setTipoTempo] = useState('anos');
   const [resultado, setResultado] = useState(null);
@@ -38,12 +38,12 @@ export default function Home() {
       newErrors.aporteMensal = 'O aporte mensal não pode ser negativo.';
     }
     const taxaNumerica = parseFloat(String(taxaJuros).replace(',', '.'));
-    if (isNaN(taxaNumerica) || taxaNumerica <= 0) {
-      newErrors.taxaJuros = 'A taxa de juros deve ser um número positivo.';
+    if (isNaN(taxaNumerica) || taxaNumerica <= 0 || !/^\d+(,\d+)?$/.test(taxaJuros)) {
+      newErrors.taxaJuros = 'A taxa de juros deve ser um número positivo, inteiro ou com vírgula.';
     }
     const tempoNumerico = parseInt(tempo);
-    if (isNaN(tempoNumerico) || tempoNumerico <= 0) {
-      newErrors.tempo = 'O período deve ser um número positivo.';
+    if (isNaN(tempoNumerico) || tempoNumerico <= 0 || !/^\d+$/.test(tempo)) {
+      newErrors.tempo = 'O período deve ser um número inteiro e positivo.';
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -71,6 +71,13 @@ export default function Home() {
     setTempo('');
     setResultado(null);
     setErrors({});
+  };
+
+  const handleTaxaJurosChange = (e) => {
+    const { value } = e.target;
+    if (/^\d*[,]?\d*$/.test(value)) {
+        setTaxaJuros(value);
+    }
   };
 
   return (
@@ -120,7 +127,7 @@ export default function Home() {
                     inputMode="decimal"
                     id="taxaJuros"
                     value={taxaJuros}
-                    onChange={(e) => setTaxaJuros(e.target.value)}
+                    onChange={handleTaxaJurosChange}
                     className={`mt-1 block w-full px-4 py-2 bg-gray-50 border rounded-l-md shadow-sm focus:outline-none sm:text-sm text-gray-900 transition-colors duration-300 ${errors.taxaJuros ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-indigo-500 focus:border-indigo-500'}`}
                     placeholder="0,0"
                     required
@@ -136,7 +143,8 @@ export default function Home() {
                 <label htmlFor="tempo" className="block text-sm font-medium text-gray-700">Período</label>
                 <div className="flex">
                   <input
-                    type="number"
+                    type="text"
+                    inputMode="numeric"
                     id="tempo"
                     value={tempo}
                     onChange={(e) => setTempo(e.target.value.replace(/\D/g, ''))}
