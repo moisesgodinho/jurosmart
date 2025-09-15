@@ -1,40 +1,21 @@
-// components/Resultado.js
 'use client';
 
 import { Line } from 'react-chartjs-2';
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-} from 'chart.js';
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend
-);
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
-// Função para formatar números como moeda brasileira
 const formatCurrency = (value) => {
-  return new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-  }).format(value);
+  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
 };
 
-export default function Resultado({ resultado }) {
+export default function Resultado({ resultado, isDarkMode }) {
   if (!resultado) return null;
 
   const { montanteFinal, totalJuros, totalInvestido, historico } = resultado;
+
+  const textColor = isDarkMode ? '#E5E7EB' : '#1F2937'; // gray-200 para dark, gray-800 para light
+  const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
 
   const chartData = {
     labels: historico.map(item => `Mês ${item.mes}`),
@@ -44,95 +25,70 @@ export default function Resultado({ resultado }) {
         data: historico.map(item => item.totalInvestido),
         borderColor: 'rgb(54, 162, 235)',
         backgroundColor: 'rgba(54, 162, 235, 0.5)',
-        yAxisID: 'y',
       },
       {
         label: 'Montante (Valor Total)',
         data: historico.map(item => item.montante),
         borderColor: 'rgb(75, 192, 192)',
         backgroundColor: 'rgba(75, 192, 192, 0.5)',
-        yAxisID: 'y',
       },
     ],
   };
 
   const chartOptions = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
-      legend: {
-        position: 'top',
-      },
-      title: {
-        display: true,
-        text: 'Evolução do Patrimônio',
-        font: {
-          size: 18,
-        }
-      },
+      legend: { position: 'top', labels: { color: textColor } },
+      title: { display: true, text: 'Evolução do Patrimônio', font: { size: 18 }, color: textColor },
     },
     scales: {
-        x: {
-            ticks: {
-                color: '#171717' // Cor para o modo claro
-            }
-        },
-        y: {
-            ticks: {
-                // Include a dollar sign in the ticks
-                callback: function(value, index, ticks) {
-                    return 'R$ ' + value.toLocaleString('pt-BR');
-                },
-                color: '#171717'
-            }
-        }
-    }
+      x: { ticks: { color: textColor }, grid: { color: gridColor } },
+      y: {
+        ticks: { callback: (value) => 'R$ ' + value.toLocaleString('pt-BR'), color: textColor },
+        grid: { color: gridColor },
+      },
+    },
   };
 
-
   return (
-    <div className="mt-8 max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md text-gray-800">
+    <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg text-gray-800 dark:text-gray-200 transition-colors duration-300">
       <h2 className="text-2xl font-bold mb-4 text-center">Resultado da Simulação</h2>
-
-      {/* Resumo */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center mb-8">
-        <div className="bg-gray-100 p-4 rounded-lg">
-          <p className="text-sm text-gray-600">Total Investido</p>
-          <p className="text-2xl font-semibold">{formatCurrency(totalInvestido)}</p>
+        <div className="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg">
+          <p className="text-sm text-gray-600 dark:text-gray-400">Total Investido</p>
+          <p className="text-xl font-semibold">{formatCurrency(totalInvestido)}</p>
         </div>
-        <div className="bg-gray-100 p-4 rounded-lg">
-          <p className="text-sm text-gray-600">Total em Juros</p>
-          <p className="text-2xl font-semibold text-green-600">{formatCurrency(totalJuros)}</p>
+        <div className="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg">
+          <p className="text-sm text-gray-600 dark:text-gray-400">Total em Juros</p>
+          <p className="text-xl font-semibold text-green-500">{formatCurrency(totalJuros)}</p>
         </div>
-        <div className="bg-gray-100 p-4 rounded-lg">
-          <p className="text-sm text-gray-600">Montante Final</p>
-          <p className="text-2xl font-semibold">{formatCurrency(montanteFinal)}</p>
+        <div className="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg">
+          <p className="text-sm text-gray-600 dark:text-gray-400">Montante Final</p>
+          <p className="text-xl font-semibold">{formatCurrency(montanteFinal)}</p>
         </div>
       </div>
-
-      {/* Gráfico */}
-      <div className="mb-8">
+      <div className="mb-8 h-80">
         <Line options={chartOptions} data={chartData} />
       </div>
-
-      {/* Tabela de Detalhes */}
       <div>
         <h3 className="text-xl font-bold mb-4">Projeção Detalhada</h3>
         <div className="overflow-x-auto max-h-96">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50 sticky top-0">
+          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <thead className="bg-gray-50 dark:bg-gray-700 sticky top-0">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mês</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Investido</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Juros no Mês</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Montante Total</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Mês</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Total Investido</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Juros no Mês</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Montante Total</th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {historico.map((item, index) => (
-                <tr key={item.mes}>
+            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+              {historico.map((item) => (
+                <tr key={item.mes} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                   <td className="px-6 py-4 whitespace-nowrap">{item.mes}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{formatCurrency(item.totalInvestido)}</td>
-                   <td className="px-6 py-4 whitespace-nowrap">{formatCurrency(item.juros)}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{formatCurrency(item.juros)}</td>
                   <td className="px-6 py-4 whitespace-nowrap font-semibold">{formatCurrency(item.montante)}</td>
                 </tr>
               ))}
