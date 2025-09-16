@@ -88,6 +88,10 @@ export default function Home() {
     }
   };
 
+  const handleBlur = (e) => {
+    e.currentTarget.blur();
+  };
+
   return (
     <main className="flex-grow bg-gray-50 text-gray-800 p-4 sm:p-6 lg:p-8">
       <div className="container mx-auto">
@@ -182,10 +186,19 @@ export default function Home() {
                 {errors.tempo && <p className="mt-1 text-xs text-red-600">{errors.tempo}</p>}
               </div>
               <div className="flex flex-col sm:flex-row gap-4 pt-2">
-                <button type="submit" className="w-full bg-indigo-600 text-white py-3 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 font-semibold transition-transform transform hover:scale-105">
+                <button
+                  type="submit"
+                  onMouseUp={handleBlur}
+                  className="w-full bg-indigo-600 text-white py-3 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 font-semibold transition-transform transform hover:scale-105"
+                >
                   Calcular
                 </button>
-                <button type="button" onClick={handleReset} className="w-full bg-gray-200 text-gray-700 py-3 px-4 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 font-semibold transition-transform transform hover:scale-105">
+                <button
+                  type="button"
+                  onClick={handleReset}
+                  onMouseUp={handleBlur}
+                  className="w-full bg-gray-200 text-gray-700 py-3 px-4 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 font-semibold transition-transform transform hover:scale-105"
+                >
                   Limpar
                 </button>
               </div>
