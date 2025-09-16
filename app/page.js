@@ -3,8 +3,9 @@
 import { useState } from 'react';
 import { calcularJurosCompostos } from '../lib/calculadora';
 import Resultado from '../components/Resultado';
+import ExplicacaoJurosCompostos from '../components/ExplicacaoJurosCompostos'; // 1. Importe o novo componente
 
-// Funções de formatação
+// ... (o restante das suas funções de formatação permanece o mesmo)
 const maskCurrency = (value) => {
   if (!value) return '';
   value = value.replace(/\D/g, '');
@@ -18,6 +19,7 @@ const unmaskValue = (maskedValue) => {
   const stringValue = String(maskedValue).replace(/\./g, '').replace(',', '.');
   return parseFloat(stringValue);
 };
+
 
 export default function Home() {
   const [valorInicial, setValorInicial] = useState('');
@@ -174,6 +176,8 @@ export default function Home() {
               <Resultado resultado={resultado} />
             </div>
           )}
+          {/* 2. Adicione o novo componente aqui */}
+          <ExplicacaoJurosCompostos />
         </div>
       </div>
     </main>
