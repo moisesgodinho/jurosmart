@@ -8,10 +8,11 @@ const poppins = Poppins({
   weight: ["400", "600", "700"],
 });
 
+
 export const metadata = {
-  title: "JuroSmart | Calculadora de Juros Compostos",
+  title: "JuroSmart: Calculadora de Juros Compostos com Aportes", 
   description:
-    "Simule seus investimentos e veja o poder dos juros compostos em ação.",
+    "Simule seus investimentos com nossa calculadora de juros compostos gratuita. Veja a projeção do seu patrimônio com aportes mensais e anuais.",
 };
 
 export default function RootLayout({ children }) {
