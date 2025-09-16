@@ -16,6 +16,9 @@ export default function Resultado({ resultado }) {
 
   const { montanteFinal, totalJuros, totalInvestido, historico } = resultado;
 
+  // Variável para controlar o destaque, garantindo que aconteça apenas uma vez
+  let highlightApplied = false;
+
   const chartData = {
     labels: historico.map(item => `Mês ${item.mes}`),
     datasets: [
@@ -104,14 +107,24 @@ export default function Resultado({ resultado }) {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {historico.map((item) => (
-                <tr key={item.mes} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{item.mes}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{formatCurrency(item.totalInvestido)}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600">{formatCurrency(item.juros)}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-indigo-600">{formatCurrency(item.montante)}</td>
-                </tr>
-              ))}
+              {historico.map((item) => {
+                let rowClass = "hover:bg-gray-50";
+                const jurosSuperamInvestido = parseFloat(item.juros) > parseFloat(item.totalInvestido);
+
+                if (jurosSuperamInvestido && !highlightApplied) {
+                  rowClass = "bg-green-100 font-semibold";
+                  highlightApplied = true;
+                }
+
+                return (
+                  <tr key={item.mes} className={rowClass}>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{item.mes}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{formatCurrency(item.totalInvestido)}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600">{formatCurrency(item.juros)}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-indigo-600">{formatCurrency(item.montante)}</td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
