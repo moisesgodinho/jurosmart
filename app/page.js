@@ -89,7 +89,7 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-gray-50 text-gray-800 p-4 sm:p-6 lg:p-8">
+    <main className="flex-grow bg-gray-50 text-gray-800 p-4 sm:p-6 lg:p-8">
       <div className="container mx-auto">
         <div className="text-center mb-10">
           <h1 className="text-4xl font-bold text-indigo-600">JuroSmart</h1>
