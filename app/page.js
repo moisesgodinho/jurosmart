@@ -3,9 +3,9 @@
 import { useState } from 'react';
 import { calcularJurosCompostos } from '../lib/calculadora';
 import Resultado from '../components/Resultado';
-import ExplicacaoJurosCompostos from '../components/ExplicacaoJurosCompostos'; // 1. Importe o novo componente
+import ExplicacaoJurosCompostos from '../components/ExplicacaoJurosCompostos';
 
-// ... (o restante das suas funções de formatação permanece o mesmo)
+// Funções de formatação
 const maskCurrency = (value) => {
   if (!value) return '';
   value = value.replace(/\D/g, '');
@@ -20,10 +20,10 @@ const unmaskValue = (maskedValue) => {
   return parseFloat(stringValue);
 };
 
-
 export default function Home() {
   const [valorInicial, setValorInicial] = useState('');
   const [aporteMensal, setAporteMensal] = useState('');
+  const [aumentoAporteAnual, setAumentoAporteAnual] = useState(''); // Novo estado
   const [taxaJuros, setTaxaJuros] = useState('');
   const [tipoTaxa, setTipoTaxa] = useState('anual');
   const [tempo, setTempo] = useState('');
@@ -39,9 +39,13 @@ export default function Home() {
     if (unmaskValue(aporteMensal) < 0) {
       newErrors.aporteMensal = 'O aporte mensal não pode ser negativo.';
     }
+    const aumentoNumerico = parseFloat(String(aumentoAporteAnual).replace(',', '.'));
+    if (aumentoAporteAnual && (isNaN(aumentoNumerico) || aumentoNumerico < 0)) {
+      newErrors.aumentoAporteAnual = 'O aumento anual deve ser um número positivo.';
+    }
     const taxaNumerica = parseFloat(String(taxaJuros).replace(',', '.'));
     if (isNaN(taxaNumerica) || taxaNumerica <= 0 || !/^\d+(,\d+)?$/.test(taxaJuros)) {
-      newErrors.taxaJuros = 'A taxa de juros deve ser um número positivo, inteiro ou com vírgula.';
+      newErrors.taxaJuros = 'A taxa de juros deve ser um número positivo.';
     }
     const tempoNumerico = parseInt(tempo);
     if (isNaN(tempoNumerico) || tempoNumerico <= 0 || !/^\d+$/.test(tempo)) {
@@ -59,26 +63,28 @@ export default function Home() {
     }
     const valorInicialNumerico = unmaskValue(valorInicial);
     const aporteMensalNumerico = unmaskValue(aporteMensal);
+    const aumentoAporteAnualNumerico = aumentoAporteAnual ? parseFloat(String(aumentoAporteAnual).replace(',', '.')) : 0;
     const taxaNumerica = parseFloat(String(taxaJuros).replace(',', '.'));
     const taxa = { valor: taxaNumerica, tipo: tipoTaxa };
     const periodo = { valor: parseInt(tempo), tipo: tipoTempo };
-    const resultadoCalculo = calcularJurosCompostos(valorInicialNumerico, aporteMensalNumerico, taxa, periodo);
+    const resultadoCalculo = calcularJurosCompostos(valorInicialNumerico, aporteMensalNumerico, taxa, periodo, aumentoAporteAnualNumerico);
     setResultado(resultadoCalculo);
   };
 
   const handleReset = () => {
     setValorInicial('');
     setAporteMensal('');
+    setAumentoAporteAnual('');
     setTaxaJuros('');
     setTempo('');
     setResultado(null);
     setErrors({});
   };
 
-  const handleTaxaJurosChange = (e) => {
+  const handleNumericChange = (setter) => (e) => {
     const { value } = e.target;
     if (/^\d*[,]?\d*$/.test(value)) {
-        setTaxaJuros(value);
+        setter(value);
     }
   };
 
@@ -121,6 +127,20 @@ export default function Home() {
                 />
                 {errors.aporteMensal && <p className="mt-1 text-xs text-red-600">{errors.aporteMensal}</p>}
               </div>
+              {/* Novo campo aqui */}
+              <div>
+                <label htmlFor="aumentoAporteAnual" className="block text-sm font-medium text-gray-700">Aumento Anual do Aporte (%)<span className="text-gray-500 font-normal">(Opcional)</span></label>
+                <input
+                    type="text"
+                    inputMode="decimal"
+                    id="aumentoAporteAnual"
+                    value={aumentoAporteAnual}
+                    onChange={handleNumericChange(setAumentoAporteAnual)}
+                    className={`mt-1 block w-full px-4 py-2 bg-gray-50 border rounded-md shadow-sm focus:outline-none sm:text-sm text-gray-900 transition-colors duration-300 ${errors.aumentoAporteAnual ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-indigo-500 focus:border-indigo-500'}`}
+                    placeholder="Ex: 5 para 5%"
+                />
+                {errors.aumentoAporteAnual && <p className="mt-1 text-xs text-red-600">{errors.aumentoAporteAnual}</p>}
+              </div>
               <div>
                 <label htmlFor="taxaJuros" className="block text-sm font-medium text-gray-700">Taxa de Juros (%)</label>
                 <div className="flex">
@@ -129,7 +149,7 @@ export default function Home() {
                     inputMode="decimal"
                     id="taxaJuros"
                     value={taxaJuros}
-                    onChange={handleTaxaJurosChange}
+                    onChange={handleNumericChange(setTaxaJuros)}
                     className={`mt-1 block w-full px-4 py-2 bg-gray-50 border rounded-l-md shadow-sm focus:outline-none sm:text-sm text-gray-900 transition-colors duration-300 ${errors.taxaJuros ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-indigo-500 focus:border-indigo-500'}`}
                     placeholder="0,0"
                     required
@@ -176,7 +196,6 @@ export default function Home() {
               <Resultado resultado={resultado} />
             </div>
           )}
-          {/* 2. Adicione o novo componente aqui */}
           <ExplicacaoJurosCompostos />
         </div>
       </div>
