@@ -6,17 +6,28 @@ import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend);
 
 const formatCurrency = (value) => {
-  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+  const numberValue = Number(value);
+  if (isNaN(numberValue)) {
+    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(0);
+  }
+  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(numberValue);
 };
+
+// Componente para o ícone de informação
+const InfoIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 inline-block mr-2 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
+    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+  </svg>
+);
+
 
 export default function Resultado({ resultado }) {
   if (!resultado) {
     return null;
   }
 
-  const { montanteFinal, totalJuros, totalInvestido, historico, historicoAnual } = resultado;
+  const { montanteFinal, totalJuros, totalInvestido, historico, historicoAnual, montanteFinalCorrigido, ganhoReal } = resultado;
 
-  // Variável para controlar o destaque, garantindo que aconteça apenas uma vez
   let highlightApplied = false;
 
   const lineChartData = {
@@ -99,11 +110,11 @@ export default function Resultado({ resultado }) {
         ...commonChartOptions.scales,
         x: {
             ...commonChartOptions.scales.x,
-            stacked: true, // Empilha as barras
+            stacked: true,
         },
         y: {
             ...commonChartOptions.scales.y,
-            stacked: true, // Empilha as barras
+            stacked: true,
         }
     }
   };
@@ -134,15 +145,37 @@ export default function Resultado({ resultado }) {
         </div>
       </div>
       
-      {/* Gráfico de Barras Anual */}
+      {montanteFinalCorrigido && (
+        <div className="pt-6 border-t border-gray-200 mt-6">
+          <h3 className="text-lg font-bold text-center text-gray-900 mb-4">Resultado Descontando a Inflação (Poder de Compra Real)</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-center">
+            <div className="bg-gray-100 p-4 rounded-lg">
+              <p className="text-sm text-gray-600">Montante Final Corrigido</p>
+              <p className="text-xl font-semibold text-indigo-600">{formatCurrency(montanteFinalCorrigido)}</p>
+            </div>
+            <div className="bg-gray-100 p-4 rounded-lg">
+              <p className="text-sm text-gray-600">Ganho Real (Acima da Inflação)</p>
+              <p className={`text-xl font-semibold ${ganhoReal >= 0 ? 'text-green-600' : 'text-red-600'}`}>{formatCurrency(ganhoReal)}</p>
+            </div>
+          </div>
+          <div className="mt-6 bg-blue-50 border border-blue-200 text-blue-800 text-sm p-4 rounded-lg">
+            <h4 className="font-bold mb-2"><InfoIcon />Entendendo o Poder de Compra Real</h4>
+            <p className="mb-2">A inflação diminui o poder de compra do dinheiro ao longo do tempo. Esta seção mostra o valor real do seu investimento, ou seja, o que você de fato poderia comprar com esse dinheiro no futuro, em valores de hoje.</p>
+            <ul className="list-disc list-inside space-y-1 pl-2">
+                <li><span className="font-semibold">Montante Final Corrigido:</span> É o seu montante final, mas ajustado para a inflação. Ele mostra seu poder de compra real no futuro.</li>
+                <li><span className="font-semibold">Ganho Real:</span> É o quanto seu poder de compra aumentou de verdade. Se este valor for negativo, significa que seu rendimento não conseguiu superar a inflação.</li>
+            </ul>
+          </div>
+        </div>
+      )}
+
       {historicoAnual.length > 0 && (
-          <div className="h-80">
+          <div className="h-80 pt-8">
               <Bar options={barChartOptions} data={barChartData} />
           </div>
       )}
 
-      {/* Gráfico de Linha Mensal */}
-      <div className="h-80">
+      <div className="h-80 pt-8">
         <Line options={lineChartOptions} data={lineChartData} />
       </div>
 

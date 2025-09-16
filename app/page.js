@@ -23,7 +23,8 @@ const unmaskValue = (maskedValue) => {
 export default function Home() {
   const [valorInicial, setValorInicial] = useState('');
   const [aporteMensal, setAporteMensal] = useState('');
-  const [aumentoAporteAnual, setAumentoAporteAnual] = useState(''); // Novo estado
+  const [aumentoAporteAnual, setAumentoAporteAnual] = useState('');
+  const [taxaInflacao, setTaxaInflacao] = useState(''); // Novo estado
   const [taxaJuros, setTaxaJuros] = useState('');
   const [tipoTaxa, setTipoTaxa] = useState('anual');
   const [tempo, setTempo] = useState('');
@@ -42,6 +43,10 @@ export default function Home() {
     const aumentoNumerico = parseFloat(String(aumentoAporteAnual).replace(',', '.'));
     if (aumentoAporteAnual && (isNaN(aumentoNumerico) || aumentoNumerico < 0)) {
       newErrors.aumentoAporteAnual = 'O aumento anual deve ser um número positivo.';
+    }
+    const inflacaoNumerica = parseFloat(String(taxaInflacao).replace(',', '.'));
+    if (taxaInflacao && (isNaN(inflacaoNumerica) || inflacaoNumerica < 0)) {
+        newErrors.taxaInflacao = 'A inflação deve ser um número positivo.';
     }
     const taxaNumerica = parseFloat(String(taxaJuros).replace(',', '.'));
     if (isNaN(taxaNumerica) || taxaNumerica <= 0 || !/^\d+(,\d+)?$/.test(taxaJuros)) {
@@ -64,10 +69,11 @@ export default function Home() {
     const valorInicialNumerico = unmaskValue(valorInicial);
     const aporteMensalNumerico = unmaskValue(aporteMensal);
     const aumentoAporteAnualNumerico = aumentoAporteAnual ? parseFloat(String(aumentoAporteAnual).replace(',', '.')) : 0;
+    const taxaInflacaoNumerica = taxaInflacao ? parseFloat(String(taxaInflacao).replace(',', '.')) : 0;
     const taxaNumerica = parseFloat(String(taxaJuros).replace(',', '.'));
     const taxa = { valor: taxaNumerica, tipo: tipoTaxa };
     const periodo = { valor: parseInt(tempo), tipo: tipoTempo };
-    const resultadoCalculo = calcularJurosCompostos(valorInicialNumerico, aporteMensalNumerico, taxa, periodo, aumentoAporteAnualNumerico);
+    const resultadoCalculo = calcularJurosCompostos(valorInicialNumerico, aporteMensalNumerico, taxa, periodo, aumentoAporteAnualNumerico, taxaInflacaoNumerica);
     setResultado(resultadoCalculo);
   };
 
@@ -75,6 +81,7 @@ export default function Home() {
     setValorInicial('');
     setAporteMensal('');
     setAumentoAporteAnual('');
+    setTaxaInflacao('');
     setTaxaJuros('');
     setTempo('');
     setResultado(null);
@@ -111,6 +118,7 @@ export default function Home() {
                   id="valorInicial"
                   value={valorInicial}
                   onChange={(e) => setValorInicial(maskCurrency(e.target.value))}
+                  autoComplete="off"
                   className={`mt-1 block w-full px-4 py-2 bg-gray-50 border rounded-md shadow-sm focus:outline-none sm:text-sm text-gray-900 transition-colors duration-300 ${errors.valorInicial ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-indigo-500 focus:border-indigo-500'}`}
                   placeholder="0,00"
                   required
@@ -125,13 +133,13 @@ export default function Home() {
                   id="aporteMensal"
                   value={aporteMensal}
                   onChange={(e) => setAporteMensal(maskCurrency(e.target.value))}
+                  autoComplete="off"
                   className={`mt-1 block w-full px-4 py-2 bg-gray-50 border rounded-md shadow-sm focus:outline-none sm:text-sm text-gray-900 transition-colors duration-300 ${errors.aporteMensal ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-indigo-500 focus:border-indigo-500'}`}
                   placeholder="0,00"
                   required
                 />
                 {errors.aporteMensal && <p className="mt-1 text-xs text-red-600">{errors.aporteMensal}</p>}
               </div>
-              {/* Novo campo aqui */}
               <div>
                 <label htmlFor="aumentoAporteAnual" className="block text-sm font-medium text-gray-700">Aumento Anual do Aporte (%)<span className="text-gray-500 font-normal">(Opcional)</span></label>
                 <input
@@ -140,10 +148,26 @@ export default function Home() {
                     id="aumentoAporteAnual"
                     value={aumentoAporteAnual}
                     onChange={handleNumericChange(setAumentoAporteAnual)}
+                    autoComplete="off"
                     className={`mt-1 block w-full px-4 py-2 bg-gray-50 border rounded-md shadow-sm focus:outline-none sm:text-sm text-gray-900 transition-colors duration-300 ${errors.aumentoAporteAnual ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-indigo-500 focus:border-indigo-500'}`}
                     placeholder="Ex: 5 para 5%"
                 />
                 {errors.aumentoAporteAnual && <p className="mt-1 text-xs text-red-600">{errors.aumentoAporteAnual}</p>}
+              </div>
+              {/* Novo campo de Inflação */}
+              <div>
+                <label htmlFor="taxaInflacao" className="block text-sm font-medium text-gray-700">Taxa de Inflação Anual (%) <span className="text-gray-500 font-normal">(Opcional)</span></label>
+                <input
+                  type="text"
+                  inputMode="decimal"
+                  id="taxaInflacao"
+                  value={taxaInflacao}
+                  onChange={handleNumericChange(setTaxaInflacao)}
+                  autoComplete="off"
+                  className={`mt-1 block w-full px-4 py-2 bg-gray-50 border rounded-md shadow-sm focus:outline-none sm:text-sm text-gray-900 transition-colors duration-300 ${errors.taxaInflacao ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-indigo-500 focus:border-indigo-500'}`}
+                  placeholder="Ex: 4 para 4%"
+                />
+                {errors.taxaInflacao && <p className="mt-1 text-xs text-red-600">{errors.taxaInflacao}</p>}
               </div>
               <div>
                 <label htmlFor="taxaJuros" className="block text-sm font-medium text-gray-700">Taxa de Juros (%)</label>
@@ -154,6 +178,7 @@ export default function Home() {
                     id="taxaJuros"
                     value={taxaJuros}
                     onChange={handleNumericChange(setTaxaJuros)}
+                    autoComplete="off"
                     className={`mt-1 block w-full px-4 py-2 bg-gray-50 border rounded-l-md shadow-sm focus:outline-none sm:text-sm text-gray-900 transition-colors duration-300 ${errors.taxaJuros ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-indigo-500 focus:border-indigo-500'}`}
                     placeholder="0,0"
                     required
@@ -174,6 +199,7 @@ export default function Home() {
                     id="tempo"
                     value={tempo}
                     onChange={(e) => setTempo(e.target.value.replace(/\D/g, ''))}
+                    autoComplete="off"
                     className={`mt-1 block w-full px-4 py-2 bg-gray-50 border rounded-l-md shadow-sm focus:outline-none sm:text-sm text-gray-900 transition-colors duration-300 ${errors.tempo ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-indigo-500 focus:border-indigo-500'}`}
                     placeholder="0"
                     required
